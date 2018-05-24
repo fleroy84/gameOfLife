@@ -165,8 +165,8 @@ class World:
         #TODO prendre en parametre le nom du fichier
         with open("patterns/gosper.txt", "r") as pattern:      
             #pattern.close()
-            col = 3
-            line = 3
+            col = 20
+            line = 20
             char = pattern.read(1)
             while char:
                 if(char != '\n'):

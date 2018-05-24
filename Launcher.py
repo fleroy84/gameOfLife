@@ -5,8 +5,8 @@ import World
 #programme "principal" 
 
 # taille de la grille
-height = 400
-width = 400
+height = 800
+width = 600
 #taille des cellules
 cellSize = 10
 
