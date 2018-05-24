@@ -1,3 +1,5 @@
+import ConfigUtils
+
 class World:
     
     def __init__(self, height, width, cellSize):
@@ -145,10 +147,32 @@ class World:
                 w+=1
             v+=1   
     
+    def canon(self): #fonction dessinant le canon a planeur de Bill Gosper
+        #array = ConfigUtils.loadPattern()   
+        array = self.loadPattern()
+    
+    
     @property
     def dicoCase(self):
         return self.__dico_case  
     
     @property
     def dicoState(self):
-        return self.__dico_etat       
+        return self.__dico_etat
+    
+    
+    def loadPattern(self):
+        #TODO prendre en parametre le nom du fichier
+        with open("patterns/planeur.txt", "r") as pattern:      
+            #pattern.close()
+            col = 0
+            line = 0
+            char = pattern.read(1)
+            while char:
+                if(char != '\n'):
+                    self.__dico_case[line*self.cellSize,col*self.cellSize]=int(char)
+                    col=col +1
+                else:
+                    line= line +1
+                    col=0
+                char = pattern.read(1)      

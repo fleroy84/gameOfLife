@@ -27,8 +27,8 @@ class Display :
         b2 = Button(self.win, text ='Stop', command =self.__stop)
         b1.pack(side =LEFT, padx =3, pady =3)
         b2.pack(side =LEFT, padx =3, pady =3)
-        #b3 = Button(win, text ='Canon planeur', command =canon)
-        #b3.pack(side =LEFT, padx =3, pady =3)
+        b3 = Button(win, text ='Canon planeur', command =self.__drawPattern)
+        b3.pack(side =LEFT, padx =3, pady =3)
         
         # = Entry(self.win)
         #entree.bind("<Return>", change_vit)
@@ -107,4 +107,9 @@ class Display :
                     self.__world.dicoCase[x,y]=0
                     self.can1.create_rectangle(x, y, x+self.cellSize, y+self.cellSize, fill='white')
                 u+=1
-            t+=1    
+            t+=1
+            
+    def __drawPattern(self):
+        self.__world.canon()
+        self.__go()
+                
