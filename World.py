@@ -163,14 +163,14 @@ class World:
     
     def loadPattern(self):
         #TODO prendre en parametre le nom du fichier
-        with open("patterns/planeur.txt", "r") as pattern:      
+        with open("patterns/gosper.txt", "r") as pattern:      
             #pattern.close()
-            col = 0
-            line = 0
+            col = 3
+            line = 3
             char = pattern.read(1)
             while char:
                 if(char != '\n'):
-                    self.__dico_case[line*self.cellSize,col*self.cellSize]=int(char)
+                    self.__dico_case[col*self.cellSize, line*self.cellSize]=int(char)
                     col=col +1
                 else:
                     line= line +1
