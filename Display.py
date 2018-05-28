@@ -1,4 +1,5 @@
 from tkinter import *
+import tkinter.filedialog
 import World
 
     
@@ -25,8 +26,10 @@ class Display :
         
         b1 = Button(self.win, text ='Go!', command = self.__go)
         b2 = Button(self.win, text ='Stop', command =self.__stop)
+        b3 = Button(self.win, text ='Save', command =self.__save)
         b1.pack(side =LEFT, padx =3, pady =3)
         b2.pack(side =LEFT, padx =3, pady =3)
+        b3.pack(side =RIGHT, padx =3, pady =3)
         b3 = Button(win, text ='Canon planeur', command =self.__drawPattern)
         b3.pack(side =LEFT, padx =3, pady =3)
         
@@ -75,9 +78,15 @@ class Display :
             
     def __stop(self):
         #"arret de l'animation" 
-        self.flag =0    
-       
+        self.flag =0
         
+    def __save(self):
+        txt = self.__world.save()
+        fichier = tkinter.filedialog.asksaveasfile(title = "Enregistrer sous...")
+        if fichier != "":
+            with open(fichier.name, "w", encoding = "utf-8") as file:
+                file.write(txt)
+               
     def play(self):
         self.__world.play()
         self.__reDraw()
@@ -85,7 +94,7 @@ class Display :
             self.win.after(self.vitesse,self.play)        
         
         
-    def __reDraw(self): #fonction redessinant le tableau a  partir de l'etat du monde
+    def __reDraw(self): #fonction redessinant le tableau aï¿½ partir de l'etat du monde
         #TODO deporter l'intelligence d'ici vers l'objet World
         self.can1.delete(ALL)
         self.__toGrid()
