@@ -10,6 +10,8 @@ class Display :
     def __init__(self, win, cellSize, height, width, world):
         
         self.flag = 0
+        self.generation = 0
+        self.population = 0
         #vitesse de l'animation      
         self.vitesse = 100        
         
@@ -18,6 +20,9 @@ class Display :
         self.win = win
         self.cellSize = cellSize
         self.__world = world
+
+        self.LabelGen = Label(self.win, text ='Generation: 0\nPopulation: 0', width=15)
+        self.LabelGen.pack(side='right')   
         
         self.can1  = Canvas(win, width =width, height =height, bg ='white')
         self.can1.bind("<Button-1>", self.__left_click)
@@ -28,7 +33,7 @@ class Display :
         
         b1 = Button(self.win, text ='Go!', command = self.__go)
         b2 = Button(self.win, text ='Stop', command =self.__stop)
-        b3 = Button(self.win, text ='Save', command =self.__save)
+        b3 = Button(self.win, text ='Save', command =self.__save)   
         
         self.varcombo = StringVar()
         stockFruits	= ('Gosper', 'Planeur')
@@ -39,8 +44,7 @@ class Display :
         b1.pack(side =LEFT, padx =3, pady =3)
         b2.pack(side =LEFT, padx =3, pady =3)
         b3.pack(side =RIGHT, padx =3, pady =3)
-        
-        
+       
     def __toGrid(self): #fonction dessinant le tableau
         self.__vert_line()
         self.__hor_line()
@@ -63,16 +67,18 @@ class Display :
         self.can1.create_rectangle(x, y, x + self.cellSize, y + self.cellSize, fill='black')
         temp = self.__world.dicoCase
         self.__world.dicoCase[x,y]=1
+        self.refreshLabel()
     
     def __right_click(self, event): #fonction tuant la cellule cliquee donc met la valeur 0 pour la cellule cliquee au dico_case
         x = event.x -(event.x%self.cellSize)
         y = event.y -(event.y%self.cellSize)
         self.can1.create_rectangle(x, y, x+self.cellSize, y+self.cellSize, fill='white')
-        dico_case[x,y]=0
+        self.__world.dicoCase[x,y]=0
+        self.refreshLabel()
         
     def __go(self):
         #"demarrage de l'animation"
-        if self.flag == 0:
+        if self.flag == 0 and self.population >0:
             self.flag =1
             self.play()
             
@@ -81,6 +87,7 @@ class Display :
         self.flag =0
         
     def __save(self):
+        self.flag =0
         txt = self.__world.save()
         fichier = tkinter.filedialog.asksaveasfile(title = "Enregistrer sous...")
         if fichier != "":
@@ -88,13 +95,20 @@ class Display :
                 file.write(txt)
                
     def play(self):
+        self.generation+=1
         self.__world.play()
         self.__reDraw()
+        self.refreshLabel()
+        if self.population ==0: #si aucune cellule vivante, on arrete l animation
+            self.flag=0
         if self.flag >0: 
-            self.win.after(self.vitesse,self.play)        
+            self.win.after(self.vitesse,self.play)
+   
+    def refreshLabel(self):
+        self.population = self.__world.population()
+        self.LabelGen.config(text='Generation: '+str(self.generation)+'\nPopulation: '+str(self.population))
         
-        
-    def __reDraw(self): #fonction redessinant le tableau à partir de l'etat du monde
+    def __reDraw(self): #fonction redessinant le tableau a partir de l'etat du monde
         #TODO deporter l'intelligence d'ici vers l'objet World
         self.can1.delete(ALL)
         self.__toGrid()
@@ -124,5 +138,4 @@ class Display :
             self.__world.canon()
         elif choise=='Planeur':
             self.__world.planeur()
-        self.__go()
-                
+        self.__go()       
