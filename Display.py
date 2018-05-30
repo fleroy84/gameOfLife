@@ -1,4 +1,6 @@
 from tkinter import *
+from tkinter.constants import *
+from tkinter.ttk import *
 import tkinter.filedialog
 import World
 
@@ -27,18 +29,16 @@ class Display :
         b1 = Button(self.win, text ='Go!', command = self.__go)
         b2 = Button(self.win, text ='Stop', command =self.__stop)
         b3 = Button(self.win, text ='Save', command =self.__save)
+        
+        self.varcombo = StringVar()
+        stockFruits	= ('Gosper', 'Planeur')
+        combo = Combobox(self.win, textvariable = self.varcombo, values = stockFruits)
+        combo.bind('<<ComboboxSelected>>', self.__drawPattern)
+        
+        combo.pack(side =LEFT, padx =3, pady =3)        
         b1.pack(side =LEFT, padx =3, pady =3)
         b2.pack(side =LEFT, padx =3, pady =3)
         b3.pack(side =RIGHT, padx =3, pady =3)
-        b3 = Button(win, text ='Canon planeur', command =self.__drawPattern)
-        b3.pack(side =LEFT, padx =3, pady =3)
-        
-        # = Entry(self.win)
-        #entree.bind("<Return>", change_vit)
-        #entree.pack(side =RIGHT)
-        #chaine = Label(self.win)
-        #chaine.configure(text = "Attente entre chaque Etape (ms) :")
-        #chaine.pack(side =RIGHT)        
         
         
     def __toGrid(self): #fonction dessinant le tableau
@@ -57,7 +57,7 @@ class Display :
             self.can1.create_line(0,c_y,self.width,c_y,width=1,fill='black')
             c_y+=self.cellSize
             
-    def __left_click(self, event): #fonction rendant vivante la cellule cliquée donc met la valeur 1 pour la cellule cliquée au dico_case
+    def __left_click(self, event): #fonction rendant vivante la cellule cliquee donc met la valeur 1 pour la cellule cliquee au dico_case
         x = event.x -(event.x%self.cellSize)
         y = event.y -(event.y%self.cellSize)
         self.can1.create_rectangle(x, y, x + self.cellSize, y + self.cellSize, fill='black')
@@ -94,7 +94,7 @@ class Display :
             self.win.after(self.vitesse,self.play)        
         
         
-    def __reDraw(self): #fonction redessinant le tableau a� partir de l'etat du monde
+    def __reDraw(self): #fonction redessinant le tableau � partir de l'etat du monde
         #TODO deporter l'intelligence d'ici vers l'objet World
         self.can1.delete(ALL)
         self.__toGrid()
@@ -118,7 +118,11 @@ class Display :
                 u+=1
             t+=1
             
-    def __drawPattern(self):
-        self.__world.canon()
+    def __drawPattern(self, evt):
+        choise = self.varcombo.get()
+        if choise=='Gosper':   
+            self.__world.canon()
+        elif choise=='Planeur':
+            self.__world.planeur()
         self.__go()
                 

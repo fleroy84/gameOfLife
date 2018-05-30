@@ -199,7 +199,11 @@ class World:
     
     def canon(self): #fonction dessinant le canon a planeur de Bill Gosper
         #array = ConfigUtils.loadPattern()   
-        array = self.loadPattern()
+        array = self.loadPattern('gosper')
+        
+    def planeur(self): #fonction dessinant le canon a planeur de Bill Gosper
+        #array = ConfigUtils.loadPattern()   
+        array = self.loadPattern('planeur')        
     
     
     @property
@@ -211,9 +215,16 @@ class World:
         return self.__dico_etat
     
     
-    def loadPattern(self):
-        #TODO prendre en parametre le nom du fichier
-        with open("patterns/gosper.txt", "r") as pattern:      
+    def loadPattern(self, value):
+        
+        if value=="gosper":   
+            filename = "patterns/gosper.txt"
+        elif value=="planeur":
+            filename = "patterns/planeur.txt"
+        else : #default
+            filename = "patterns/gosper.txt"
+        
+        with open(filename, "r") as pattern:      
             #pattern.close()
             col = 20
             line = 20
