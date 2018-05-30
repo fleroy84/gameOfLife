@@ -30,7 +30,7 @@ class World:
     
                 # cas speciaux:
                 # les coins
-                if x==0 and y==0: #coin en haut a  gauche
+                if x==0 and y==0: #coin en haut aï¿½ gauche
                     compt_viv=0
                     if self.__dico_case[x, y + self.cellSize] == 1:
                         compt_viv+=1
@@ -39,7 +39,7 @@ class World:
                     if self.__dico_case[x+self.cellSize, y+self.cellSize]==1:
                         compt_viv+=1
                     self.__dico_etat[x, y]=compt_viv
-                elif x==0 and y==int(self.height-self.cellSize): #coin en bas a  gauche
+                elif x==0 and y==int(self.height-self.cellSize): #coin en bas aï¿½ gauche
                     compt_viv=0
                     if self.__dico_case[x, y-self.cellSize]==1:
                         compt_viv+=1
@@ -48,7 +48,7 @@ class World:
                     if self.__dico_case[x+self.cellSize, y]==1:
                         compt_viv+=1
                     self.__dico_etat[x, y]=compt_viv
-                elif x==int(self.width-self.cellSize) and y==0: #coin en haut a  droite
+                elif x==int(self.width-self.cellSize) and y==0: #coin en haut aï¿½ droite
                     compt_viv=0
                     if self.__dico_case[x-self.cellSize, y]==1:
                         compt_viv+=1
@@ -145,7 +145,57 @@ class World:
                     self.__dico_etat[x, y]=compt_viv
     
                 w+=1
+            v+=1
+
+    #sauvegarder une grille    
+    def save(self):
+        txt=""
+        v=0
+        while v!= self.height/self.cellSize:
+            w=0
+            while w!= self.width/self.cellSize:
+                x=w*self.cellSize
+                y=v*self.cellSize
+                txt+=str(self.__dico_case[x,y])
+                w+=1
+            txt=txt+"\n"
             v+=1   
+        i=0
+        #supprime rï¿½pï¿½titivement la premiï¿½re ligne si elle ne contient aucune cellule vivante
+        while txt.splitlines()[0].count('1')==0:
+            txt='\n'.join(txt.split('\n')[1:])
+        #supprime rï¿½pï¿½titivement la derniï¿½re ligne si elle ne contient aucune cellule vivante
+        while txt.splitlines()[-1].count('1')==0:
+            txt=txt[:txt.rfind('\n')]
+        #fonction de suppression de colonnes
+        def RemoveEmptyCols(txt,direction=0):
+            list = txt.splitlines()
+            tab=[]
+            for elem in list:
+                if direction==0:
+                    n=elem.find('1')
+                    if n!=-1:
+                        tab.append(n)
+                else:
+                    tab.append(len(elem)-elem.rfind('1')-1)
+            nbLines=min(tab)
+            if nbLines>0:
+                i=len(list)-1
+                while i>=0:
+                    s=list[i]
+                    if direction==0:
+                        s=s[nbLines:]
+                    else:
+                        s=s[:-nbLines]
+                    list[i]=s
+                    i-=1           
+            txt='\n'.join(list)
+            return txt        
+        #supprime les premiï¿½res colonnes si elles ne contiennent aucune cellule vivante
+        txt=RemoveEmptyCols(txt)
+        #supprime les derniï¿½res colonnes si elles ne contiennent aucune cellule vivante
+        txt=RemoveEmptyCols(txt,1)
+        return txt
     
     def canon(self): #fonction dessinant le canon a planeur de Bill Gosper
         #array = ConfigUtils.loadPattern()   
