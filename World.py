@@ -1,4 +1,5 @@
 import ConfigUtils
+import Constants
 
 class World:
     
@@ -199,11 +200,11 @@ class World:
     
     def canon(self): #fonction dessinant le canon a planeur de Bill Gosper
         #array = ConfigUtils.loadPattern()   
-        array = self.loadPattern('gosper')
+        array = self.loadPattern(Constants.GOSPER)
         
     def planeur(self): #fonction dessinant le canon a planeur de Bill Gosper
         #array = ConfigUtils.loadPattern()   
-        array = self.loadPattern('planeur')        
+        array = self.loadPattern(Constants.PLANEUR)        
     
     
     @property
@@ -217,9 +218,9 @@ class World:
     
     def loadPattern(self, value):
         
-        if value=="gosper":   
+        if value==Constants.GOSPER:   
             filename = "patterns/gosper.txt"
-        elif value=="planeur":
+        elif value==Constants.PLANEUR:
             filename = "patterns/planeur.txt"
         else : #default
             filename = "patterns/gosper.txt"

@@ -1,0 +1,2 @@
+PLANEUR = "planeur"
+GOSPER = "gosper"
