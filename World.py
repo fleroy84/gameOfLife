@@ -198,6 +198,21 @@ class World:
         txt=RemoveEmptyCols(txt,1)
         return txt
     
+    #compte le nombre de cellules vivantes
+    def population(self):
+        n=0
+        v=0        
+        while v!= self.height/self.cellSize:
+            w=0
+            while w!= self.width/self.cellSize:
+                x=w*self.cellSize
+                y=v*self.cellSize
+                if self.__dico_case[x,y]==1:
+                    n+=1
+                w+=1
+            v+=1
+        return n
+    
     def canon(self): #fonction dessinant le canon a planeur de Bill Gosper
         #array = ConfigUtils.loadPattern()   
         array = self.loadPattern(Constants.GOSPER)
