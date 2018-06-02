@@ -21,13 +21,12 @@ class Display :
         self.cellSize = cellSize
         self.__world = world
         
-        #étiquette initiale
+        #etiquette initiale
         self.LabelGen = Label(self.win, text ='Generation: 0\nPopulation: 0', width=15)
         self.LabelGen.pack(side='right')   
         
         self.can1  = Canvas(win, width =width, height =height, bg ='white')
         self.can1.bind("<Button-1>", self.__left_click)
-        #self.can1.bind("<Button-3>", self.__right_click)
         self.can1.pack(side =TOP, padx =5, pady =5)
         
         self.__toGrid()
@@ -35,18 +34,15 @@ class Display :
         self.text_b1 = StringVar()
         self.text_b1.set("Go !")
         b1 = Button(self.win, textvariable =self.text_b1, command = self.__go)
-        #b2 = Button(self.win, text ='Stop', command =self.__stop)
         b3 = Button(self.win, text ='Save', command =self.__save)
         b4 = Button(self.win, text = "RAZ", command = self.__raz)
         
         self.varcombo = StringVar()
-        stockFruits	= ('Gosper', 'Planeur')
-        combo = Combobox(self.win, textvariable = self.varcombo, values = stockFruits)
-        combo.bind('<<ComboboxSelected>>', self.__drawPattern)
+        patternsValues = ('', 'Gosper', 'Planeur')
+        combo = Combobox(self.win, textvariable = self.varcombo, values = patternsValues)
         
         combo.pack(side =LEFT, padx =3, pady =3)        
         b1.pack(side =LEFT, padx =3, pady =3)
-        #b2.pack(side =LEFT, padx =3, pady =3)
         b3.pack(side =RIGHT, padx =3, pady =3)
         b4.pack(side = RIGHT, padx = 3, pady = 3)
        
@@ -66,29 +62,26 @@ class Display :
             self.can1.create_line(0,c_y,self.width,c_y,width=1,fill='black')
             c_y+=self.cellSize
             
-    def __left_click(self, event): #fonction rendant vivante ou miorte la cellule cliquee
+    def __left_click(self, event): #fonction rendant vivante ou morte la cellule cliquee
         x = event.x -(event.x%self.cellSize)
         y = event.y -(event.y%self.cellSize)
         if self.__world.dicoCase[x,y] == 0:
-            self.can1.create_rectangle(x, y, x + self.cellSize, y + self.cellSize, fill='black')
-            #temp = self.__world.dicoCase
-            self.__world.dicoCase[x,y] = 1
-            self.refreshLabel()
+            
+            # L'utilisateur a t-il un pattern a afficher ?
+            if self.varcombo.get() == "" :
+                self.can1.create_rectangle(x, y, x + self.cellSize, y + self.cellSize, fill='black')
+                self.__world.dicoCase[x,y] = 1
+                self.refreshLabel()
+            else :
+                self.__drawPattern(x, y)
         else:
             self.can1.create_rectangle(x, y, x+self.cellSize, y+self.cellSize, fill='white')
             self.__world.dicoCase[x,y]=0
             self.refreshLabel()
 
-    '''
-    def __right_click(self, event): #fonction tuant la cellule cliquee donc met la valeur 0 pour la cellule cliquee au dico_case
-        x = event.x -(event.x%self.cellSize)
-        y = event.y -(event.y%self.cellSize)
-        self.__world.dicoCase[x,y]=0
-        self.refreshLabel()
-    '''
 
     def __raz(self):
-        #Remise à zéro de l'affichage et du compteur de génération
+        #Remise a� zero de l'affichage et du compteur de generation
         self.generation = 0
         self.__world.raz()
         self.__world.play()
@@ -96,20 +89,13 @@ class Display :
         self.refreshLabel()
         
     def __go(self):
-        #"demarrage/arrêt de l'animation"
+        #"demarrage/arret de l'animation"
         self.flag = not self.flag
         if self.flag == 1: #and self.population > 0:
             self.text_b1.set("Stop")
             self.play()
         else:
             self.text_b1.set("Go !")
-            
-            
-    '''
-    def __stop(self):
-        #"arret de l'animation" 
-        self.flag = 0
-    '''
         
     def __save(self):
         self.flag =0
@@ -157,12 +143,12 @@ class Display :
                 u+=1
             t+=1
             
-    def __drawPattern(self, evt):
+    def __drawPattern(self, x, y):
         choise = self.varcombo.get()
         if choise == 'Gosper':   
-            self.__world.canon()
+            self.__world.canon(x, y)
         elif choise == 'Planeur':
-            self.__world.planeur()
+            self.__world.planeur(x, y)
         self.__world.play()
         self.__reDraw()
         self.refreshLabel()

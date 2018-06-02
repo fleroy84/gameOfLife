@@ -10,7 +10,7 @@ class World:
         self.__dico_etat = {} #dictionnaire contenant le nombre de cellules vivantes autour de chaque cellule
         self.__dico_case = {} #dictionnaire contenant les coordonnees de chaques cellules et une valeur 0 ou 1 si elles sont respectivement mortes ou vivantes
         
-        #Mise à zéro de la grille du jeu
+        #Mise a� zero de la grille du jeu
         self.raz()
     
     
@@ -155,10 +155,10 @@ class World:
             txt=txt+"\n"
             v+=1   
         i=0
-        #supprime r�p�titivement la premi�re ligne si elle ne contient aucune cellule vivante
+        #supprime respectivement la premiere ligne si elle ne contient aucune cellule vivante
         while txt.splitlines()[0].count('1')==0:
             txt='\n'.join(txt.split('\n')[1:])
-        #supprime r�p�titivement la derni�re ligne si elle ne contient aucune cellule vivante
+        #supprime respectivement la derniere ligne si elle ne contient aucune cellule vivante
         while txt.splitlines()[-1].count('1')==0:
             txt=txt[:txt.rfind('\n')]
         #fonction de suppression de colonnes
@@ -185,9 +185,9 @@ class World:
                     i-=1           
             txt='\n'.join(list)
             return txt        
-        #supprime les premi�res colonnes si elles ne contiennent aucune cellule vivante
+        #supprime les premieres colonnes si elles ne contiennent aucune cellule vivante
         txt=RemoveEmptyCols(txt)
-        #supprime les derni�res colonnes si elles ne contiennent aucune cellule vivante
+        #supprime les dernieres colonnes si elles ne contiennent aucune cellule vivante
         txt=RemoveEmptyCols(txt,1)
         return txt
     
@@ -206,13 +206,13 @@ class World:
             v+=1
         return n
     
-    def canon(self): #fonction dessinant le canon a planeur de Bill Gosper
+    def canon(self, x, y): #fonction dessinant le canon de Bill Gosper
         #array = ConfigUtils.loadPattern()   
-        array = self.loadPattern(Constants.GOSPER)
+        array = self.loadPattern(Constants.GOSPER, x, y)
         
-    def planeur(self): #fonction dessinant le canon a planeur de Bill Gosper
+    def planeur(self, x, y): #fonction dessinant le canon a planeur de Bill Gosper
         #array = ConfigUtils.loadPattern()   
-        array = self.loadPattern(Constants.PLANEUR)
+        array = self.loadPattern(Constants.PLANEUR, x, y)
         
     def raz(self):
         i=0
@@ -235,7 +235,7 @@ class World:
         return self.__dico_etat
     
     
-    def loadPattern(self, value):
+    def loadPattern(self, value, x, y):
         if value==Constants.GOSPER:   
             filename = "patterns/gosper.txt"
         elif value==Constants.PLANEUR:
@@ -244,15 +244,14 @@ class World:
             filename = "patterns/gosper.txt"
         
         with open(filename, "r") as pattern:      
-            #pattern.close()
-            col = 10
-            line = 10
+            col = x
+            line = y
             char = pattern.read(1)
             while char:
                 if(char != '\n'):
-                    self.__dico_case[col*self.cellSize, line*self.cellSize] = int(char)
-                    col = col +1
+                    self.__dico_case[col, line] = int(char)
+                    col = col + self.cellSize
                 else:
-                    line = line +1
-                    col = 10
+                    line = line + self.cellSize
+                    col = x
                 char = pattern.read(1)      

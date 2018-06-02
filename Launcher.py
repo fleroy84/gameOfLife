@@ -12,6 +12,7 @@ cellSize = 10
 
 
 window = Tk()
+window.title('Game of life ISN 2018') 
 world = World.World(height, width, cellSize)
 display=Display.Display(window,cellSize,height,width, world)
 
