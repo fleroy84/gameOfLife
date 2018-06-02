@@ -10,16 +10,9 @@ class World:
         self.__dico_etat = {} #dictionnaire contenant le nombre de cellules vivantes autour de chaque cellule
         self.__dico_case = {} #dictionnaire contenant les coordonnees de chaques cellules et une valeur 0 ou 1 si elles sont respectivement mortes ou vivantes
         
-        i=0
-        while i!= self.width/ self.cellSize: #assigne une valeur 0(morte) a chaque coordonnees(cellules)
-            j=0
-            while j!= self.height/ self.cellSize:
-                x=i* self.cellSize
-                y=j* self.cellSize
-                self.__dico_case[x,y]=0
-                j+=1
-            i+=1        
-        
+        #Mise à zéro de la grille du jeu
+        self.raz()
+    
     
     def play(self): #fonction comptant le nombre de cellules vivantes autour de chaque cellule
         v=0
@@ -219,7 +212,18 @@ class World:
         
     def planeur(self): #fonction dessinant le canon a planeur de Bill Gosper
         #array = ConfigUtils.loadPattern()   
-        array = self.loadPattern(Constants.PLANEUR)        
+        array = self.loadPattern(Constants.PLANEUR)
+        
+    def raz(self):
+        i=0
+        while i!= self.width/ self.cellSize: #assigne une valeur 0(morte) a chaque coordonnees(cellules)
+            j=0
+            while j!= self.height/ self.cellSize:
+                x=i* self.cellSize
+                y=j* self.cellSize
+                self.__dico_case[x,y] = 0
+                j+=1
+            i+=1
     
     
     @property
@@ -232,7 +236,6 @@ class World:
     
     
     def loadPattern(self, value):
-        
         if value==Constants.GOSPER:   
             filename = "patterns/gosper.txt"
         elif value==Constants.PLANEUR:
@@ -242,14 +245,14 @@ class World:
         
         with open(filename, "r") as pattern:      
             #pattern.close()
-            col = 20
-            line = 20
+            col = 10
+            line = 10
             char = pattern.read(1)
             while char:
                 if(char != '\n'):
-                    self.__dico_case[col*self.cellSize, line*self.cellSize]=int(char)
-                    col=col +1
+                    self.__dico_case[col*self.cellSize, line*self.cellSize] = int(char)
+                    col = col +1
                 else:
-                    line= line +1
-                    col=0
+                    line = line +1
+                    col = 10
                 char = pattern.read(1)      
