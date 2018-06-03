@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter.constants import *
 from tkinter.ttk import *
+from tkinter import messagebox
 import tkinter.filedialog
 import World
 
@@ -34,6 +35,7 @@ class Display :
         self.text_b1 = StringVar()
         self.text_b1.set("Go !")
         b1 = Button(self.win, textvariable =self.text_b1, command = self.__go)
+        b2 = Button(self.win, text ='Load', command =self.__load)
         b3 = Button(self.win, text ='Save', command =self.__save)
         b4 = Button(self.win, text = "RAZ", command = self.__raz)
         
@@ -43,8 +45,10 @@ class Display :
         
         combo.pack(side =LEFT, padx =3, pady =3)        
         b1.pack(side =LEFT, padx =3, pady =3)
-        b3.pack(side =RIGHT, padx =3, pady =3)
-        b4.pack(side = RIGHT, padx = 3, pady = 3)
+        b4.pack(side =LEFT, padx = 70, pady = 3)  
+        b2.pack(side =LEFT, padx =3, pady =3)
+        b3.pack(side =LEFT, padx =3, pady =3)
+
        
     def __toGrid(self): #fonction dessinant le tableau
         self.__vert_line()
@@ -81,6 +85,7 @@ class Display :
 
 
     def __raz(self):
+        self.flag =0
         #Remise a  zero de l'affichage et du compteur de generation
         self.generation = 0
         self.__world.raz()
@@ -99,11 +104,26 @@ class Display :
         
     def __save(self):
         self.flag =0
-        txt = self.__world.save()
-        fichier = tkinter.filedialog.asksaveasfile(title = "Enregistrer sous...")
-        if fichier != "":
-            with open(fichier.name, "w", encoding = "utf-8") as file:
-                file.write(txt)
+        if self.__world.population()>0:
+            txt = self.__world.save()
+            filename = tkinter.filedialog.asksaveasfile(title = "Enregistrer sous...")
+            if filename != "":
+                with open(filename.name, "w", encoding = "utf-8") as file:
+                    file.write(txt)
+        else:
+            messagebox.showerror("Sauvergarde de la configuration impossible", "La grille ne contient aucune cellule vivante.")
+    
+    def __load(self):
+        self.flag=0
+        self.configFile = tkinter.filedialog.askopenfile(initialdir = "/", title = "Choisissez une configuration", filetypes = (("fichiers texte","*.txt"),("tous les fichiers","*.*")))
+        if self.configFile:
+            self.__world.raz() #on réinitialise la grille
+            x, y, alertSize = self.__world.ConfigCenteredfPosition(self.configFile.name) #en fonction des dimensions de la config, on propose un selecteur de position
+            if alertSize:
+                messagebox.showerror("Chargement de la configuration", "Les dimensions de la configuration sont plus grandes que la grille, elle sera tronquee")
+            self.__world.loadConfigPerso(self.configFile.name,x,y)
+            self.play()
+            self.refreshLabel(True)
                
     def play(self):
         self.generation+=1
@@ -115,7 +135,9 @@ class Display :
         if self.flag > 0: 
             self.win.after(self.vitesse,self.play)
    
-    def refreshLabel(self):
+    def refreshLabel(self, init_generation=False): #on passe en parametre le booleen True à la methode si l on souhaite initialiser le compteur de generatìon à 0 apres execution de play() 
+        if init_generation:
+            self.generation=0
         self.population = self.__world.population()
         self.LabelGen.config(text='Generation: '+str(self.generation)+'\nPopulation: '+str(self.population))
         
@@ -151,5 +173,4 @@ class Display :
             self.__world.planeur(x, y)
         self.__world.play()
         self.__reDraw()
-        self.refreshLabel()
-        
+        self.refreshLabel()       

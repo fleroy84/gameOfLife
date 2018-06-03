@@ -254,4 +254,38 @@ class World:
                 else:
                     line = line + self.cellSize
                     col = x
-                char = pattern.read(1)      
+                char = pattern.read(1)
+                
+    
+    def ConfigCenteredfPosition(self, filename):
+        with open(filename, "r") as configfile:         
+            txt = configfile.read()
+            nb_char = txt.count('0')+txt.count('1') #nombre de caracteres
+            configfile.seek(0, 0)
+            nb_col = len(configfile.readline())-1 #nombre de colonnes (de caracteres de la premiere ligne)
+            nb_lines = nb_char / nb_col #nombre de lignes
+        configfile.closed
+        x = int((self.width/self.cellSize-nb_col)/2)*self.cellSize
+        y = int((self.height/self.cellSize-nb_lines)/2)*self.cellSize
+        alertSize = False
+        if x<0:
+            x=0
+            alertSize=True
+        if y<0:
+            y=0
+            alertSize=True
+        return x,y,alertSize
+    
+    def loadConfigPerso(self, filename, x, y):         
+        with open(filename, "r") as configfile:
+            col = x
+            line = y
+            char = configfile.read(1)
+            while char:
+                if(char != '\n'):
+                    self.__dico_case[col, line] = int(char)
+                    col = col + self.cellSize
+                else:
+                    line = line + self.cellSize
+                    col = x
+                char = configfile.read(1)
