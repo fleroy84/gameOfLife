@@ -10,7 +10,7 @@ class World:
         self.__dico_etat = {} #dictionnaire contenant le nombre de cellules vivantes autour de chaque cellule
         self.__dico_case = {} #dictionnaire contenant les coordonnees de chaques cellules et une valeur 0 ou 1 si elles sont respectivement mortes ou vivantes
         
-        #Mise a  zero de la grille du jeu
+        #Mise aï¿½ zero de la grille du jeu
         self.raz()
     
     
@@ -207,12 +207,14 @@ class World:
         return n
     
     def canon(self, x, y): #fonction dessinant le canon de Bill Gosper
-        #array = ConfigUtils.loadPattern()   
         array = self.loadPattern(Constants.GOSPER, x, y)
         
-    def planeur(self, x, y): #fonction dessinant le canon a planeur de Bill Gosper
-        #array = ConfigUtils.loadPattern()   
+    def planeur(self, x, y): #fonction dessinant le planeur
         array = self.loadPattern(Constants.PLANEUR, x, y)
+        
+    def replicateur(self, x, y):
+        #fonction dessinant le replicateur
+        array = self.loadPattern(Constants.REPLICATEUR, x, y)
         
     def raz(self):
         i=0
@@ -228,18 +230,19 @@ class World:
     
     @property
     def dicoCase(self):
-        return self.__dico_case  
+        return self.__dico_case
     
     @property
     def dicoState(self):
         return self.__dico_etat
     
-    
     def loadPattern(self, value, x, y):
-        if value==Constants.GOSPER:   
+        if value==Constants.GOSPER:
             filename = "patterns/gosper.txt"
         elif value==Constants.PLANEUR:
             filename = "patterns/planeur.txt"
+        elif value == Constants.REPLICATEUR:
+            filename = "patterns/replicateur.txt"
         else : #default
             filename = "patterns/gosper.txt"
         
