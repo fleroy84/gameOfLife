@@ -4,6 +4,7 @@ from tkinter.ttk import *
 from tkinter import messagebox
 import tkinter.filedialog
 import World
+from Regles import *
 
     
 class Display :
@@ -24,7 +25,7 @@ class Display :
         
         #etiquette initiale
         self.LabelGen = Label(self.win, text ='Generation: 0\nPopulation: 0', width=15)
-        self.LabelGen.pack(side='right')   
+        self.LabelGen.pack(side='right', padx = 5)
         
         self.can1  = Canvas(win, width =width, height =height, bg ='white')
         self.can1.bind("<Button-1>", self.__left_click)
@@ -40,14 +41,25 @@ class Display :
         b4 = Button(self.win, text = "RAZ", command = self.__raz)
         
         self.varcombo = StringVar()
-        patternsValues = ('', 'Gosper', 'Planeur')
+        patternsValues = ('', 'Gosper', 'Planeur', "Replicateur")
         combo = Combobox(self.win, textvariable = self.varcombo, values = patternsValues)
         
         combo.pack(side =LEFT, padx =3, pady =3)        
         b1.pack(side =LEFT, padx =3, pady =3)
-        b4.pack(side =LEFT, padx = 70, pady = 3)  
         b2.pack(side =LEFT, padx =3, pady =3)
-        b3.pack(side =LEFT, padx =3, pady =3)
+        b3.pack(side =RIGHT, padx =3, pady =3)
+        b4.pack(side = RIGHT, padx = 3, pady = 3)
+        
+        #règles initiales
+        self.regles = {"survie" : [2,3], "naissance" : [3]}
+        
+        #liste déroulante pour choisir la règle du jeu
+        self.regle_actuelle = StringVar()
+        self.regle_actuelle.set("Standard")
+        liste_regles = list(rules.keys())
+        self.liste_deroulante = Combobox(self.win, textvariable = self.regle_actuelle, values = liste_regles)
+        self.liste_deroulante.pack(side = "bottom", padx = 3, pady = 3)
+        self.liste_deroulante.bind("<<ComboboxSelected>>", self.changer_regle)
 
        
     def __toGrid(self): #fonction dessinant le tableau
@@ -151,17 +163,18 @@ class Display :
             while u!= self.height/self.cellSize:
                 x=t*self.cellSize
                 y=u*self.cellSize
-                if self.__world.dicoState[x,y]==3:
-                    self.__world.dicoCase[x,y]=1
+                #si la cellule est vivante
+                if self.__world.dicoCase[x,y]:
                     self.can1.create_rectangle(x, y, x+self.cellSize, y+self.cellSize, fill='black')
-                elif self.__world.dicoState[x,y]==2:
-                    if self.__world.dicoCase[x,y]==1:
-                        self.can1.create_rectangle(x, y, x+self.cellSize, y+self.cellSize, fill='black')
-                    else:
-                        self.can1.create_rectangle(x, y, x+self.cellSize, y+self.cellSize, fill='white')
-                elif self.__world.dicoState[x,y]<2 or self.__world.dicoState[x,y]>3:
-                    self.__world.dicoCase[x,y]=0
+                    #mort si pas dans la règle de survie
+                    if self.__world.dicoState[x,y] not in self.regles["survie"]:
+                        self.__world.dicoCase[x,y] = 0
+                #si la cellule est morte
+                else:
                     self.can1.create_rectangle(x, y, x+self.cellSize, y+self.cellSize, fill='white')
+                    #naissance si dans la règle de naissance
+                    if self.__world.dicoState[x,y] in self.regles["naissance"]:
+                        self.__world.dicoCase[x,y] = 1
                 u+=1
             t+=1
             
@@ -171,6 +184,14 @@ class Display :
             self.__world.canon(x, y)
         elif choise == 'Planeur':
             self.__world.planeur(x, y)
+        elif choise == "Réplicateur":
+            self.__world.replicateur(x, y)
         self.__world.play()
         self.__reDraw()
-        self.refreshLabel()       
+        self.refreshLabel()
+    
+    def changer_regle(self, event):
+        cle = self.regle_actuelle.get()
+        self.regles["survie"] = rules[cle][0]
+        self.regles["naissance"] = rules[cle][1]
+        
