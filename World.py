@@ -24,7 +24,7 @@ class World:
     
                 # cas speciaux:
                 # les coins
-                if x==0 and y==0: #coin en haut a� gauche
+                if x==0 and y==0: #coin en haut a gauche
                     compt_viv=0
                     if self.__dico_case[x, y + self.cellSize] == 1:
                         compt_viv+=1
@@ -33,7 +33,7 @@ class World:
                     if self.__dico_case[x+self.cellSize, y+self.cellSize]==1:
                         compt_viv+=1
                     self.__dico_etat[x, y]=compt_viv
-                elif x==0 and y==int(self.height-self.cellSize): #coin en bas a� gauche
+                elif x==0 and y==int(self.height-self.cellSize): #coin en bas a gauche
                     compt_viv=0
                     if self.__dico_case[x, y-self.cellSize]==1:
                         compt_viv+=1
