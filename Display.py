@@ -50,10 +50,10 @@ class Display :
         b3.pack(side =RIGHT, padx =3, pady =3)
         b4.pack(side = RIGHT, padx = 3, pady = 3)
         
-        #règles initiales
+        #regles initiales
         self.regles = {"survie" : [2,3], "naissance" : [3]}
         
-        #liste déroulante pour choisir la règle du jeu
+        #liste deroulante pour choisir la regle du jeu
         self.regle_actuelle = StringVar()
         self.regle_actuelle.set("Standard")
         liste_regles = list(rules.keys())
@@ -153,7 +153,7 @@ class Display :
         self.population = self.__world.population()
         self.LabelGen.config(text='Generation: '+str(self.generation)+'\nPopulation: '+str(self.population))
         
-    def __reDraw(self): #fonction redessinant le tableau a partir de l'etat du monde
+    def __reDraw(self): #fonction redessinant le tableau a partir de l'etat du monde et applique les regles de survie
         #TODO deporter l'intelligence d'ici vers l'objet World
         self.can1.delete(ALL)
         self.__toGrid()
@@ -166,17 +166,35 @@ class Display :
                 #si la cellule est vivante
                 if self.__world.dicoCase[x,y]:
                     self.can1.create_rectangle(x, y, x+self.cellSize, y+self.cellSize, fill='black')
-                    #mort si pas dans la règle de survie
+                    #mort si pas dans la regle de survie
                     if self.__world.dicoState[x,y] not in self.regles["survie"]:
                         self.__world.dicoCase[x,y] = 0
                 #si la cellule est morte
                 else:
                     self.can1.create_rectangle(x, y, x+self.cellSize, y+self.cellSize, fill='white')
-                    #naissance si dans la règle de naissance
+                    #naissance si dans la regle de naissance
                     if self.__world.dicoState[x,y] in self.regles["naissance"]:
                         self.__world.dicoCase[x,y] = 1
                 u+=1
             t+=1
+            
+    def __reDrawOnly(self): #fonction redessinant le tableau a partir de l'etat du monde
+        self.can1.delete(ALL)
+        self.__toGrid()
+        t=0
+        while t!= self.width/self.cellSize:
+            u=0
+            while u!= self.height/self.cellSize:
+                x=t*self.cellSize
+                y=u*self.cellSize
+                #si la cellule est vivante
+                if self.__world.dicoCase[x,y]:
+                    self.can1.create_rectangle(x, y, x+self.cellSize, y+self.cellSize, fill='black')
+                #si la cellule est morte
+                else:
+                    self.can1.create_rectangle(x, y, x+self.cellSize, y+self.cellSize, fill='white')
+                u+=1
+            t+=1    
             
     def __drawPattern(self, x, y):
         choise = self.varcombo.get()
@@ -184,10 +202,10 @@ class Display :
             self.__world.canon(x, y)
         elif choise == 'Planeur':
             self.__world.planeur(x, y)
-        elif choise == "Réplicateur":
+        elif choise == "Replicateur":
             self.__world.replicateur(x, y)
         self.__world.play()
-        self.__reDraw()
+        self.__reDrawOnly()
         self.refreshLabel()
     
     def changer_regle(self, event):
