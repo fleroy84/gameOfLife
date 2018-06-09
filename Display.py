@@ -97,14 +97,15 @@ class Display :
 
 
     def __raz(self):
-        self.flag =0
-        #Remise a  zero de l'affichage et du compteur de generation
-        self.generation = 0
+        #Remise a  zero de l'affichage
         self.__world.raz()
         self.__world.play()
         self.__reDraw()
+        self.generation = 0
         self.refreshLabel()
-        
+        if self.flag == 1:
+            self.__go()
+            
     def __go(self):
         #"demarrage/arret de l'animation"
         self.flag = not self.flag
@@ -115,18 +116,23 @@ class Display :
             self.text_b1.set("Go !")
         
     def __save(self):
-        self.flag =0
+        if self.flag == 1:
+            self.__go()
         if self.__world.population()>0:
             txt = self.__world.save()
             filename = tkinter.filedialog.asksaveasfile(title = "Enregistrer sous...")
+            if filename is None:
+                    return            
             if filename != "":
                 with open(filename.name, "w", encoding = "utf-8") as file:
                     file.write(txt)
+  
         else:
             messagebox.showerror("Sauvergarde de la configuration impossible", "La grille ne contient aucune cellule vivante.")
     
     def __load(self):
-        self.flag=0
+        if self.flag == 1:
+            self.__go()
         self.configFile = tkinter.filedialog.askopenfile(initialdir = "/", title = "Choisissez une configuration", filetypes = (("fichiers texte","*.txt"),("tous les fichiers","*.*")))
         if self.configFile:
             self.__world.raz() #on réinitialise la grille
