@@ -10,11 +10,18 @@ class World:
         self.__dico_etat = {} #dictionnaire contenant le nombre de cellules vivantes autour de chaque cellule
         self.__dico_case = {} #dictionnaire contenant les coordonnees de chaques cellules et une valeur 0 ou 1 si elles sont respectivement mortes ou vivantes
         
-        #Mise a� zero de la grille du jeu
+        #regles initiales
+        self.regles = {"survie" : [2,3], "naissance" : [3]}        
+        
+        #Mise a zero de la grille du jeu
         self.raz()
     
     
-    def play(self): #fonction comptant le nombre de cellules vivantes autour de chaque cellule
+    def play(self): #fonction permettant au monde d'evoluer
+        self.__count()
+        self.__update_world()   
+            
+    def __count(self): #fonction comptant le nombre de cellules vivantes autour de chaque cellule
         v=0
         while v!= self.width/self.cellSize:
             w=0
@@ -42,7 +49,7 @@ class World:
                     if self.__dico_case[x+self.cellSize, y]==1:
                         compt_viv+=1
                     self.__dico_etat[x, y]=compt_viv
-                elif x==int(self.width-self.cellSize) and y==0: #coin en haut a� droite
+                elif x==int(self.width-self.cellSize) and y==0: #coin en haut a droite
                     compt_viv=0
                     if self.__dico_case[x-self.cellSize, y]==1:
                         compt_viv+=1
@@ -139,7 +146,28 @@ class World:
                     self.__dico_etat[x, y]=compt_viv
     
                 w+=1
-            v+=1
+            v+=1        
+
+    def __update_world(self): #fonction redessinant le tableau a partir de l'etat du monde et applique les regles de survie
+        t=0
+        while t!= self.width/self.cellSize:
+            u=0
+            while u!= self.height/self.cellSize:
+                x=t*self.cellSize
+                y=u*self.cellSize
+                #si la cellule est vivante
+                if self.__dico_case[x,y]:
+                    #mort si pas dans la regle de survie
+                    if self.__dico_etat[x,y] not in self.regles["survie"]:
+                        self.__dico_case[x,y] = 0
+                #si la cellule est morte
+                else:
+                    #naissance si dans la regle de naissance
+                    if self.__dico_etat[x,y] in self.regles["naissance"]:
+                        self.__dico_case[x,y] = 1
+                u+=1
+            t+=1
+
 
     #sauvegarder une grille    
     def save(self):
