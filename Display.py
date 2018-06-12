@@ -8,56 +8,72 @@ from Regles import *
 
     
 class Display :
-    
     def __init__(self, win, cellSize, height, width, world):
+        #couleurs
+        self.c_vivante = "#1525A9"
+        self.c_morte = "#FFFFFF"
+        self.c_bords = "#999999"
         
+        #propriÃ©tÃ©s
         self.flag = 0
         self.generation = 0
         self.population = 0
-        #vitesse de l'animation      
-        self.vitesse = 100        
-        
+        self.vitesse = 100
         self.height = height
         self.width = width
         self.win = win
         self.cellSize = cellSize
         self.__world = world
         
+        #cadres
+        self.cadre1 = Frame(self.win, borderwidth = 2, relief = GROOVE)
+        self.cadre2 = Frame(self.win, borderwidth = 2, relief = GROOVE)
+        self.cadre3 = Frame(self.win, borderwidth = 2, relief = GROOVE)
+        self.cadre4 = Frame(self.win, borderwidth = 2, relief = GROOVE)
+        
         #etiquette initiale
-        self.LabelGen = Label(self.win, text ='Generation: 0\nPopulation: 0', width=15)
-        self.LabelGen.pack(side='right', padx = 5)
+        self.LabelGen = Label(self.cadre2, text ='Generation: 0\nPopulation: 0', width=12)
         
-        self.can1  = Canvas(win, width =width, height =height, bg ='white')
+        #canevas contenant la grille
+        self.can1  = Canvas(win, width =width, height =height, bg = self.c_morte)
         self.can1.bind("<Button-1>", self.__left_click)
-        self.can1.pack(side =TOP, padx =5, pady =5)
         
-        self.__toGrid()
-        
+        #Boutons
         self.text_b1 = StringVar()
         self.text_b1.set("Go !")
-        b1 = Button(self.win, textvariable =self.text_b1, command = self.__go)
-        b2 = Button(self.win, text ='Load', command =self.__load)
-        b3 = Button(self.win, text ='Save', command =self.__save)
-        b4 = Button(self.win, text = "RAZ", command = self.__raz)
+        self.b1 = Button(self.cadre3, textvariable =self.text_b1, command = self.__go)
+        self.b2 = Button(self.cadre4, text ='Load', command =self.__load)
+        self.b3 = Button(self.cadre4, text ='Save', command =self.__save)
+        self.b4 = Button(self.cadre3, text = "RAZ", command = self.__raz)
         
+        #liste dÃ©roulante pour choisir un pattern Ã  insÃ©rer
         self.varcombo = StringVar()
         patternsValues = ('', 'Gosper', 'Planeur', "Replicateur")
-        combo = Combobox(self.win, textvariable = self.varcombo, values = patternsValues)
-        
-        combo.pack(side =LEFT, padx =3, pady =3)        
-        b1.pack(side =LEFT, padx =3, pady =3)
-        b2.pack(side =LEFT, padx =3, pady =3)
-        b3.pack(side =RIGHT, padx =3, pady =3)
-        b4.pack(side = RIGHT, padx = 3, pady = 3)
+        self.combo = Combobox(self.cadre1, textvariable = self.varcombo, values = patternsValues)
         
         #liste deroulante pour choisir la regle du jeu
         self.regle_actuelle = StringVar()
         self.regle_actuelle.set("Standard")
         liste_regles = list(rules.keys())
-        self.liste_deroulante = Combobox(self.win, textvariable = self.regle_actuelle, values = liste_regles)
-        self.liste_deroulante.pack(side = "bottom", padx = 3, pady = 3)
+        self.liste_deroulante = Combobox(self.cadre1, textvariable = self.regle_actuelle, values = liste_regles)
         self.liste_deroulante.bind("<<ComboboxSelected>>", self.changer_regle)
-
+        
+        #placement des widgets
+        self.can1.grid(row = 1, column = 0, padx = 5, pady = 5, rowspan = 3)
+        self.cadre1.grid(row = 0, column = 0, padx = 5, pady = 5)
+        self.combo.grid(row = 0, column = 0, padx = 5, pady = 5)
+        self.liste_deroulante.grid(row = 0, column = 1, padx = 5, pady = 5)
+        self.cadre2.grid(row = 2, column = 1, padx = 5, pady = 5)
+        self.LabelGen.grid(row = 0, column = 0)
+        self.cadre3.grid(row = 1, column = 1, padx = 5, pady = 5)
+        self.b1.grid(row = 0, column = 0, padx = 5, pady = 5)
+        self.b4.grid(row = 1, column = 0, padx = 5, pady = 5)
+        self.cadre4.grid(row = 3, column = 1, padx = 5, pady = 5)
+        self.b2.grid(row = 0, column = 0, padx = 5, pady = 5)
+        self.b3.grid(row = 1, column = 0, padx = 5, pady = 5)
+        
+        #grille initiale
+        self.__toGrid()
        
     def __toGrid(self): #fonction dessinant le tableau
         self.__vert_line()
@@ -66,13 +82,13 @@ class Display :
     def __vert_line(self):
         c_x = 0
         while c_x != self.width:
-            self.can1.create_line(c_x,0,c_x,self.height,width=1,fill='black')
+            self.can1.create_line(c_x,0,c_x,self.height,width=1,fill=self.c_bords)
             c_x+=self.cellSize
     
     def __hor_line(self):
         c_y = 0
         while c_y != self.height:
-            self.can1.create_line(0,c_y,self.width,c_y,width=1,fill='black')
+            self.can1.create_line(0,c_y,self.width,c_y,width=1,fill=self.c_bords)
             c_y+=self.cellSize
             
     def __left_click(self, event): #fonction rendant vivante ou morte la cellule cliquee
@@ -82,19 +98,18 @@ class Display :
             
             # L'utilisateur a t-il un pattern a afficher ?
             if self.varcombo.get() == "" :
-                self.can1.create_rectangle(x, y, x + self.cellSize, y + self.cellSize, fill='black')
+                self.can1.create_rectangle(x, y, x + self.cellSize, y + self.cellSize, fill= self.c_vivante, outline = self.c_bords)
                 self.__world.dicoCase[x,y] = 1
                 self.refreshLabel()
             else :
                 self.__drawPattern(x, y)
         else:
-            self.can1.create_rectangle(x, y, x+self.cellSize, y+self.cellSize, fill='white')
+            self.can1.create_rectangle(x, y, x+self.cellSize, y+self.cellSize, fill=self.c_vivante, outline = self.c_bords)
             self.__world.dicoCase[x,y]=0
             self.refreshLabel()
 
-
     def __raz(self):
-        #Remise a  zero de l'affichage
+        #Remise aï¿½ zero de l'affichage
         self.__world.raz()
         self.__world.play()
         self.__reDraw()
@@ -132,7 +147,7 @@ class Display :
             self.__go()
         self.configFile = tkinter.filedialog.askopenfile(initialdir = "/", title = "Choisissez une configuration", filetypes = (("fichiers texte","*.txt"),("tous les fichiers","*.*")))
         if self.configFile:
-            self.__world.raz() #on réinitialise la grille
+            self.__world.raz() #on rï¿½initialise la grille
             x, y, alertSize = self.__world.ConfigCenteredfPosition(self.configFile.name) #en fonction des dimensions de la config, on propose un selecteur de position
             if alertSize:
                 messagebox.showerror("Chargement de la configuration", "Les dimensions de la configuration sont plus grandes que la grille, elle sera tronquee")
@@ -150,7 +165,7 @@ class Display :
         if self.flag > 0: 
             self.win.after(self.vitesse,self.play)
    
-    def refreshLabel(self, init_generation=False): #on passe en parametre le booleen True à la methode si l on souhaite initialiser le compteur de generatìon à 0 apres execution de play() 
+    def refreshLabel(self, init_generation=False): #on passe en parametre le booleen True ï¿½ la methode si l on souhaite initialiser le compteur de generatï¿½on ï¿½ 0 apres execution de play() 
         if init_generation:
             self.generation=0
         self.population = self.__world.population()
@@ -158,7 +173,6 @@ class Display :
             
     def __reDraw(self): #fonction redessinant le tableau a partir de l'etat du monde
         self.can1.delete(ALL)
-        self.__toGrid()
         t=0
         while t!= self.width/self.cellSize:
             u=0
@@ -167,13 +181,13 @@ class Display :
                 y=u*self.cellSize
                 #si la cellule est vivante
                 if self.__world.dicoCase[x,y]:
-                    self.can1.create_rectangle(x, y, x+self.cellSize, y+self.cellSize, fill='black')
+                    self.can1.create_rectangle(x, y, x+self.cellSize, y+self.cellSize, fill=self.c_vivante, outline = self.c_bords)
                 #si la cellule est morte
                 else:
-                    self.can1.create_rectangle(x, y, x+self.cellSize, y+self.cellSize, fill='white')
+                    self.can1.create_rectangle(x, y, x+self.cellSize, y+self.cellSize, fill=self.c_morte, outline = self.c_bords)
                 u+=1
-            t+=1    
-            
+            t+=1
+    
     def __drawPattern(self, x, y):
         choise = self.varcombo.get()
         if choise == 'Gosper':   
