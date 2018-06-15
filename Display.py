@@ -109,14 +109,12 @@ class Display :
             self.refreshLabel()
 
     def __raz(self):
-        #Remise a� zero de l'affichage
+        #Remise a zero de l'affichage
+        self.flag = 0
         self.__world.raz()
-        self.__world.play()
         self.__reDraw()
-        self.generation = 0
-        self.refreshLabel()
-        if self.flag == 1:
-            self.__go()
+        self.refreshLabel(True)
+        self.text_b1.set("Go !")
             
     def __go(self):
         #"demarrage/arret de l'animation"
@@ -156,13 +154,15 @@ class Display :
             self.refreshLabel(True)
                
     def play(self):
-        self.generation+=1
         self.__world.play()
         self.__reDraw()
         self.refreshLabel()
         if self.population == 0: #si aucune cellule vivante, on arrete l animation
+            self.generation+=1
             self.flag = 0
+            self.text_b1.set("Go !")
         if self.flag > 0: 
+            self.generation+=1
             self.win.after(self.vitesse,self.play)
    
     def refreshLabel(self, init_generation=False): #on passe en parametre le booleen True � la methode si l on souhaite initialiser le compteur de generat�on � 0 apres execution de play() 
