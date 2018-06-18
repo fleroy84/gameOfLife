@@ -95,7 +95,6 @@ class Display :
         x = event.x -(event.x%self.cellSize)
         y = event.y -(event.y%self.cellSize)
         if self.__world.dicoCase[x,y] == 0:
-            
             # L'utilisateur a t-il un pattern a afficher ?
             if self.varcombo.get() == "" :
                 self.can1.create_rectangle(x, y, x + self.cellSize, y + self.cellSize, fill= self.c_vivante, outline = self.c_bords)
@@ -104,7 +103,7 @@ class Display :
             else :
                 self.__drawPattern(x, y)
         else:
-            self.can1.create_rectangle(x, y, x+self.cellSize, y+self.cellSize, fill=self.c_vivante, outline = self.c_bords)
+            self.can1.create_rectangle(x, y, x+self.cellSize, y+self.cellSize, fill=self.c_morte, outline = self.c_bords)
             self.__world.dicoCase[x,y]=0
             self.refreshLabel()
 
