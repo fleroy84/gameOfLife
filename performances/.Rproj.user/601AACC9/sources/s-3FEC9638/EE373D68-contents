@@ -1,0 +1,16 @@
+setwd("~/Dropbox/Professionnel/Espace R/Mooc R")
+smp = read.csv2("/Users/nicolasvigot/Dropbox/Professionnel/Espace R/Mooc R/smp1.csv")
+str(smp)
+View(smp)
+
+barplot(table(smp$prof))
+pie(table(smp$prof))
+hist(smp$age,xlab = "Age",col = "blue",main = "Histogramme des ages")
+boxplot(smp$age,xlab = "Age")
+boxplot(smp$age~smp$rs,ylab = "Age",xlab = "Recherche de sensations")
+plot(x = jitter(smp$age),y = jitter(smp$n.enfant))
+
+hdr<-read.csv2("hdrs.csv")
+plotmeans(hdr$HDRS~hdr$VISIT)
+
+interaction.plot(hdr$VISIT,hdr$NUMERO,hdr$HDRS,legend = F)

@@ -1,0 +1,71 @@
+setwd("~/Dropbox (Personnelle)/Professionnel/Espace R/Mooc R")
+load("smp.rda")
+attach(smp)
+
+#Représentation graphique avec "bruit" pour une meilleure visualisation
+plot(jitter(age),jitter(dur.interv,factor = 4))
+
+#Droite de régression
+abline(lm(dur.interv ~ age), lwd = 2, col = "red")
+
+#Test du modèle de régression adpoté (en particulier, est-ce que le coef dir = 0)
+modl <- lm(dur.interv ~ age, data = smp)
+summary(modl)
+
+#Confrontation à la corrélation des variables
+cor.test(dur.interv,age, data = smp)
+
+#Utilisation d'une variable binaire
+plot(dep.cons, jitter(dur.interv))
+abline(lm(dur.interv~dep.cons), lwd = 4, col = "red")
+
+#Comparaison entre le modèle de regression et le t-test de Student
+mod2 <- lm(dur.interv~dep.cons)
+summary(mod2)
+
+
+#Regréssion linéaire multiple
+mod3 <- lm(dur.interv~age+dep.cons+subst.cons+scz.cons)
+summary(mod3)
+
+#Introduction de la variable profession (qualitative, non binaire)
+mod4 <- lm(dur.interv~age+dep.cons+subst.cons+scz.cons+prof)
+summary(mod4)
+#La mofalité de référence de la variable profession est ici
+#agriculteur. Les résultats comparent donc la durée d'interview
+#selon les professions par rapport à cette modalité
+
+#Pour changer la modalité de référence de la variable profession
+prof <- relevel(prof, ref = "ouvrier")
+mod5 <- lm(dur.interv~age+dep.cons+subst.cons+scz.cons+prof)
+summary(mod5)
+#En moyenne, les agriculteurs ont des durées d'interview 
+#supérieure à celles des ouvrier de 14 minutes
+
+#Pour avoir l'effet global de la variable "profession"
+drop1(mod5,.~.,test="F")
+
+
+
+#Interaction entre les variables
+mod6 <- lm(dur.interv~age+dep.cons*subst.cons+scz.cons)
+summary(mod6)
+#Le p=0,16 ne permet pas de conclure à une synergie ou une interaction entre les
+#variables dep.cons et subst
+
+#ANOVA : régression linéaire multiple, où toutes les variables explicatives sont 
+#catégorielles
+mod7 <- lm(dur.interv~prof)
+summary(mod7)
+drop1(mod7,.~.,test = "F")
+#C'est en fait un test de régression linéaire multiple...
+
+#Conditions de validité d'un modèle de régression : 
+#1/ Normalité du bruit
+mod3 <- lm(dur.interv~age+dep.cons+subst.cons+scz.cons)
+hist(resid(mod3),col = "grey", main = "")
+qqnorm(resid(mod3))
+qqline(resid(mod3))
+
+
+

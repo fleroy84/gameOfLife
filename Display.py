@@ -8,7 +8,10 @@ from Regles import *
 
     
 class Display :
-    def __init__(self, win, cellSize, height, width, world):
+    def __init__(self, win, cellSize, height, width, world, chrono):
+        #chronométrage
+        self.chronometre = chrono
+        
         #couleurs
         self.c_vivante = "#1525A9"
         self.c_morte = "#FFFFFF"
@@ -114,15 +117,20 @@ class Display :
         self.__reDraw()
         self.refreshLabel(True)
         self.text_b1.set("Go !")
+        self.chronometre.raz()
+        self.chronometre.initfile()
             
     def __go(self):
         #"demarrage/arret de l'animation"
         self.flag = not self.flag
         if self.flag == 1: #and self.population > 0:
             self.text_b1.set("Stop")
+            self.chronometre.chronostart()
             self.play()
         else:
             self.text_b1.set("Go !")
+            self.chronometre.chronostop()
+            self.chronometre.tofile(self.generation, self.population)
         
     def __save(self):
         if self.flag == 1:
@@ -156,6 +164,10 @@ class Display :
         self.__world.play()
         self.__reDraw()
         self.refreshLabel()
+        #point chronometre toute les 10 générations
+        if self.generation % 10 == 0:
+            self.chronometre.chronostop()
+            self.chronometre.tofile(self.generation, self.population)
         if self.population == 0: #si aucune cellule vivante, on arrete l animation
             self.generation+=1
             self.flag = 0

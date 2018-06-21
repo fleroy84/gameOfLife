@@ -1,0 +1,24 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1529573170104.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "564574941",
+    "id" : "A8D19A1C",
+    "lastKnownWriteTime" : 1529582065,
+    "last_content_update" : 1529582065949,
+    "path" : "~/Google Drive LAK/Mes Documents /Espace Python/Git/gameOfLife/performances/analyse.R",
+    "project_path" : "analyse.R",
+    "properties" : {
+        "cursorPosition" : "28,0",
+        "docOutlineVisible" : "0",
+        "scrollLine" : "5",
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
