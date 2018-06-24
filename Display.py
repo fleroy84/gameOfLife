@@ -35,7 +35,7 @@ class Display :
         self.cadre4 = Frame(self.win, borderwidth = 2, relief = GROOVE)
         
         #etiquette initiale
-        self.LabelGen = Label(self.cadre2, text ='Generation: 0\nPopulation: 0', width=12)
+        self.LabelGen = Label(self.cadre2, text ='Generation: 0\nPopulation: 0', width=15)
         
         #canevas contenant la grille
         self.can1  = Canvas(win, width =width, height =height, bg = self.c_morte)
